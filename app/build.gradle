@@ -50,7 +50,7 @@ dependencies {
 
     // optional - Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
-    
+
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata:2.2.0"
 }
