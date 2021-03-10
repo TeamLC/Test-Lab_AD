@@ -10,7 +10,8 @@ on:
           - main
           - testHeroku 
   pull_request:
-    branches: [ testHeroku ]
+    branches:
+      - testHeroku
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
