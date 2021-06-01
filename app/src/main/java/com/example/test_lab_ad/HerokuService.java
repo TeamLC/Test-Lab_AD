@@ -13,9 +13,6 @@ public interface HerokuService {
     @GET("read")
     Call<List<Name>> all();
 
-    @GET("read/{id}")
-    Call<Name> get(@Path("id") int id);
-
-    @POST("read/new")
+    @POST("read")
     Call<Name> create(@Body Name name);
 }

@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -27,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
 
         final Button viewAllButton = (Button) findViewById(R.id.viewAllButton);
         final TextView allNames = (TextView) findViewById(R.id.allNames);
+
+        final EditText nameInput = (EditText) findViewById(R.id.nameInput);
+        final TextView textView = (TextView) findViewById(R.id.textView);
+        final Button button = (Button) findViewById(R.id.button);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://androidapi-1326.herokuapp.com")
@@ -52,6 +58,28 @@ public class MainActivity extends AppCompatActivity {
                     public void onFailure(Call<List<Name>> _, Throwable t) {
                         t.printStackTrace();
                         allNames.setText(t.getMessage());
+                    }
+                });
+            }
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Random random = new Random();
+                Name name = new Name(random.nextInt(100),nameInput.getText().toString());
+                Call<Name> createCall = service.create(name);
+                createCall.enqueue(new Callback<Name>() {
+                    @Override
+                    public void onResponse(Call<Name> _, Response<Name> resp) {
+                        Name newName = resp.body();
+                        textView.setText("Created Name with ISBN: " + nameInput.getText().toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<Name> _, Throwable t) {
+                        t.printStackTrace();
+                        textView.setText(t.getMessage());
                     }
                 });
             }
