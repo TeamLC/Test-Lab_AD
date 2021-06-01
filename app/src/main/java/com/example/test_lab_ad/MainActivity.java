@@ -9,12 +9,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,36 +25,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final TextView textView = (TextView) findViewById(R.id.textView);
-        final Button button = (Button) findViewById(R.id.button);
+        final Button viewAllButton = (Button) findViewById(R.id.viewAllButton);
+        final TextView allNames = (TextView) findViewById(R.id.allNames);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://androidapi-1326.herokuapp.com/")
+                .baseUrl("https://androidapi-1326.herokuapp.com")
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         final HerokuService service = retrofit.create(HerokuService.class);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        viewAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Call<ResponseBody> call = service.hello();
-                call.enqueue(new Callback<ResponseBody>() {
+                Call<List<Name>> createCall = service.all();
+                createCall.enqueue(new Callback<List<Name>>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> _,
-                                           Response<ResponseBody> response) {
-                        Log.d("test", String.valueOf(response));
-                        try {
-                            textView.setText(response.body().string());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            textView.setText(e.getMessage());
+                    public void onResponse(Call<List<Name>> _, Response<List<Name>> resp) {
+                        allNames.setText("ALL Names:\n");
+                        for (Name b : resp.body()) {
+                            allNames.append(b.name + "\n");
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> _, Throwable t) {
+                    public void onFailure(Call<List<Name>> _, Throwable t) {
                         t.printStackTrace();
-                        textView.setText(t.getMessage());
+                        allNames.setText(t.getMessage());
                     }
                 });
             }
